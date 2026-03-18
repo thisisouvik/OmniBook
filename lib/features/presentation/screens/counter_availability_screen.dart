@@ -12,7 +12,8 @@ class CounterAvailabilityScreen extends StatefulWidget {
   const CounterAvailabilityScreen({super.key});
 
   @override
-  State<CounterAvailabilityScreen> createState() => _CounterAvailabilityScreenState();
+  State<CounterAvailabilityScreen> createState() =>
+      _CounterAvailabilityScreenState();
 }
 
 class _CounterAvailabilityScreenState extends State<CounterAvailabilityScreen> {
@@ -47,7 +48,10 @@ class _CounterAvailabilityScreenState extends State<CounterAvailabilityScreen> {
                   children: <Widget>[
                     const Text(
                       'No services selected.',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
@@ -121,7 +125,8 @@ class _CounterAvailabilityScreenState extends State<CounterAvailabilityScreen> {
                   itemBuilder: (context, index) {
                     final slot = slots[index];
                     final status = cubit.slotStatus(slot);
-                    final selected = state.selectedSlot != null &&
+                    final selected =
+                        state.selectedSlot != null &&
                         state.selectedSlot!.hour == slot.hour &&
                         state.selectedSlot!.minute == slot.minute;
                     return SlotTile(
@@ -134,7 +139,8 @@ class _CounterAvailabilityScreenState extends State<CounterAvailabilityScreen> {
                         cubit.setSlot(slot);
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (_) => DateTimeScreen(preselectedSlot: slot),
+                            builder: (_) =>
+                                DateTimeScreen(preselectedSlot: slot),
                           ),
                         );
                       },
@@ -237,11 +243,17 @@ class _CounterRow extends StatelessWidget {
             children: <Widget>[
               Text(
                 'Counter $counterId',
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: isAvailable
                       ? AppColors.success.withValues(alpha: 0.12)
@@ -251,7 +263,9 @@ class _CounterRow extends StatelessWidget {
                 child: Text(
                   isAvailable ? 'Available' : 'Occupied',
                   style: TextStyle(
-                    color: isAvailable ? AppColors.success : AppColors.textSecondary,
+                    color: isAvailable
+                        ? AppColors.success
+                        : AppColors.textSecondary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -275,7 +289,8 @@ class _CounterRow extends StatelessWidget {
                   return Positioned.fill(
                     child: LayoutBuilder(
                       builder: (context, constraints) {
-                        final width = constraints.maxWidth * (rightFactor - leftFactor);
+                        final width =
+                            constraints.maxWidth * (rightFactor - leftFactor);
                         return Stack(
                           children: <Widget>[
                             Positioned(
@@ -302,9 +317,15 @@ class _CounterRow extends StatelessWidget {
           const SizedBox(height: 8),
           Row(
             children: <Widget>[
-              const Text('9:00 AM', style: TextStyle(color: AppColors.textSecondary)),
+              const Text(
+                '9:00 AM',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
               const Spacer(),
-              const Text('6:00 PM', style: TextStyle(color: AppColors.textSecondary)),
+              const Text(
+                '6:00 PM',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
             ],
           ),
           const SizedBox(height: 8),
