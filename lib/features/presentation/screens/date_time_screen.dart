@@ -47,7 +47,9 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
           final slots = cubit.availableSlotsForDate(selectedDate);
 
           List<DateTime> slotsInRange(int startHour, int endHour) {
-            return slots.where((slot) => slot.hour >= startHour && slot.hour < endHour).toList();
+            return slots
+                .where((slot) => slot.hour >= startHour && slot.hour < endHour)
+                .toList();
           }
 
           final morning = slotsInRange(9, 12);
@@ -71,11 +73,15 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(color: AppColors.border),
+                            borderSide: const BorderSide(
+                              color: AppColors.border,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(color: AppColors.border),
+                            borderSide: const BorderSide(
+                              color: AppColors.border,
+                            ),
                           ),
                         ),
                       ),
@@ -128,7 +134,8 @@ class _DateTimeScreenState extends State<DateTimeScreen> {
                     final booking = cubit.confirmBooking();
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
-                        builder: (_) => BookingConfirmedScreen(booking: booking),
+                        builder: (_) =>
+                            BookingConfirmedScreen(booking: booking),
                       ),
                     );
                   } on StateError catch (error) {
@@ -174,7 +181,8 @@ class _TimeSection extends StatelessWidget {
             const SizedBox(height: 8),
             ...slots.map((slot) {
               final status = cubit.slotStatus(slot);
-              final isSelected = selectedSlot != null &&
+              final isSelected =
+                  selectedSlot != null &&
                   selectedSlot!.hour == slot.hour &&
                   selectedSlot!.minute == slot.minute;
               return Padding(
@@ -184,11 +192,16 @@ class _TimeSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.teal
-                          : (status.isAvailable ? Colors.white : AppColors.disabledBg),
+                          : (status.isAvailable
+                                ? Colors.white
+                                : AppColors.disabledBg),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected ? AppColors.teal : AppColors.border,
@@ -211,7 +224,11 @@ class _TimeSection extends StatelessWidget {
                         ),
                         if (isSelected) const SizedBox(width: 4),
                         if (isSelected)
-                          const Icon(Icons.check_rounded, color: Colors.white, size: 14),
+                          const Icon(
+                            Icons.check_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
                       ],
                     ),
                   ),
@@ -242,7 +259,11 @@ class _BottomBar extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: <BoxShadow>[
-          BoxShadow(color: Color(0x1A00102A), blurRadius: 16, offset: Offset(0, -3)),
+          BoxShadow(
+            color: Color(0x1A00102A),
+            blurRadius: 16,
+            offset: Offset(0, -3),
+          ),
         ],
       ),
       child: Column(
@@ -284,7 +305,9 @@ class _BottomBar extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.teal,
                 disabledBackgroundColor: AppColors.disabledBg,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: const Text(
@@ -319,7 +342,11 @@ class _MiniMonthCalendar extends StatelessWidget {
     final firstOfMonth = DateTime(focusedDate.year, focusedDate.month, 1);
     final firstWeekday = firstOfMonth.weekday;
     final startOffset = firstWeekday - 1;
-    final daysInMonth = DateTime(focusedDate.year, focusedDate.month + 1, 0).day;
+    final daysInMonth = DateTime(
+      focusedDate.year,
+      focusedDate.month + 1,
+      0,
+    ).day;
 
     final cells = <DateTime?>[];
     for (var i = 0; i < startOffset; i++) {
@@ -375,7 +402,8 @@ class _MiniMonthCalendar extends StatelessWidget {
               if (date == null) {
                 return const SizedBox.shrink();
               }
-              final selected = date.year == selectedDate.year &&
+              final selected =
+                  date.year == selectedDate.year &&
                   date.month == selectedDate.month &&
                   date.day == selectedDate.day;
               return InkWell(
