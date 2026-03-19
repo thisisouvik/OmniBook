@@ -113,6 +113,7 @@ gantt
 	title Mock Bookings on Current Date
 	dateFormat  YYYY-MM-DD HH:mm
 	axisFormat  %H:%M
+	tickInterval 30minute
 
 	section Counter 1
 	Busy : 2026-03-20 10:00, 60m
