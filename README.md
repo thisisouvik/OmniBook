@@ -73,6 +73,44 @@ flowchart TD
 
 ---
 
+## How Multi-Counter Availability Is Solved
+
+Availability is computed in `BookingService` with a simple but reliable per-counter check:
+
+1. For a candidate start slot and selected total duration, the app first validates business-hour boundaries.
+2. It then checks each counter independently (1 to 3).
+3. For each counter, it tests overlap against that counter's existing bookings only.
+4. Any counter with no overlap for the full requested duration is marked free.
+5. The slot is enabled when the free-counter list is not empty; otherwise it is greyed out.
+
+```dart
+List<int> findFreeCounters(DateTime start, int duration) {
+	if (!isWithinBusinessHours(start, duration)) {
+		return <int>[];
+	}
+
+	final freeCounters = <int>[];
+	for (var counterId = 1; counterId <= totalCounters; counterId++) {
+		if (isCounterFree(counterId, start, duration)) {
+			freeCounters.add(counterId);
+		}
+	}
+	return freeCounters;
+}
+
+SlotStatus checkSlot(DateTime start, int duration) {
+	final freeCounters = findFreeCounters(start, duration);
+	return SlotStatus(
+		isAvailable: freeCounters.isNotEmpty,
+		freeCounters: freeCounters,
+	);
+}
+```
+
+This ensures users only see slots where at least one counter can serve the entire service window continuously, not just the first part of it.
+
+---
+
 ## Mock Data And Booking Logic (Current Date)
 
 The project currently uses in-memory mock data to simulate a real salon/barber workflow.
