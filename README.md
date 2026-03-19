@@ -1,6 +1,12 @@
 <p align="center">
 	<img src="assets/logo/splashLogo.svg" alt="OmniBook Logo" width="180" />
 </p>
+
+<div align = center><h2>OmniBook: Multi-Counter Service Booking System</h2><div>
+
+*Service-based business (take saloon) that manages appointments across 
+multiple independent service counters.*
+
 <div align="center">
 
 [![Download App](https://img.shields.io/badge/⬇️%20Download%20App-Google%20Drive-blue?style=for-the-badge)](https://drive.google.com/drive/folders/1PJcLKp49UNXe2uAF8pMkmUvxZ1eYHnGW?usp=sharing)
@@ -64,6 +70,70 @@ flowchart TD
 - Counter selection before confirmation
 - Booking confirmation summary
 - Asset-driven UI (SVG icons, splash logo, custom font)
+
+---
+
+## Mock Data And Booking Logic (Current Date)
+
+The project currently uses in-memory mock data to simulate a real salon/barber workflow.
+
+### 1. Sample Service Catalog
+
+Source: `lib/features/presentation/data/sample_services.dart`
+
+| Service | Duration (mins) | Price |
+| --- | ---: | ---: |
+| Quick Trim | 15 | 20 |
+| Haircut & Style | 45 | 50 |
+| Full Grooming | 90 | 120 |
+| Beard Trim | 20 | 15 |
+
+### 2. Current-Date Mock Bookings
+
+Source: `lib/features/services/booking_service.dart`
+
+All mock bookings are generated for the current date using `DateTime.now()`.
+
+| Counter | Booked From | Booked To |
+| --- | --- | --- |
+| Counter 1 | 10:00 | 11:00 |
+| Counter 2 | 10:30 | 11:30 |
+| Counter 3 | 09:00 | 10:30 |
+
+### 3. Business Window And Slot Generation
+
+- Business hours: `09:00` to `18:00`
+- Slot interval: every `30 minutes`
+- A slot is enabled only if at least one counter has a continuous free gap equal to selected total service duration.
+
+### 4. Visual Timeline (Current Date)
+
+```mermaid
+gantt
+	title Mock Bookings on Current Date
+	dateFormat  YYYY-MM-DD HH:mm
+	axisFormat  %H:%M
+
+	section Counter 1
+	Busy : 2026-03-20 10:00, 60m
+
+	section Counter 2
+	Busy : 2026-03-20 10:30, 60m
+
+	section Counter 3
+	Busy : 2026-03-20 09:00, 90m
+```
+
+### 5. Example Logic (Full Grooming = 90 mins)
+
+| Candidate Start Slot | Free Counter(s) | Slot State |
+| --- | --- | --- |
+| 09:00 | 2 | Enabled |
+| 09:30 | None | Greyed out |
+| 10:00 | None | Greyed out |
+| 10:30 | 3 | Enabled |
+
+This is the same dynamic disabling logic used in the app: if no counter can provide a continuous duration window (for example 90 mins), that slot is disabled.
 
 ---
 
