@@ -2,7 +2,7 @@
 	<img src="assets/logo/splashLogo.svg" alt="OmniBook Logo" width="180" />
 </p>
 
-<div align = center><h2>OmniBook: Multi-Counter Service Booking System</h2><div>
+<h2 align="center">OmniBook: Multi-Counter Service Booking System</h2>
 
 *Service-based business (take saloon) that manages appointments across 
 multiple independent service counters.*
