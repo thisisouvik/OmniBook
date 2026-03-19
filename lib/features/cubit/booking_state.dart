@@ -5,11 +5,13 @@ class BookingState extends Equatable {
   final List<Service> selectedServices;
   final DateTime? selectedDate;
   final DateTime? selectedSlot;
+  final int? selectedCounter;
 
   const BookingState({
     required this.selectedServices,
     required this.selectedDate,
     required this.selectedSlot,
+    required this.selectedCounter,
   });
 
   factory BookingState.initial() {
@@ -17,6 +19,7 @@ class BookingState extends Equatable {
       selectedServices: <Service>[],
       selectedDate: null,
       selectedSlot: null,
+      selectedCounter: null,
     );
   }
 
@@ -38,8 +41,10 @@ class BookingState extends Equatable {
     List<Service>? selectedServices,
     DateTime? selectedDate,
     DateTime? selectedSlot,
+    int? selectedCounter,
     bool clearSelectedDate = false,
     bool clearSelectedSlot = false,
+    bool clearSelectedCounter = false,
   }) {
     return BookingState(
       selectedServices: selectedServices ?? this.selectedServices,
@@ -49,9 +54,17 @@ class BookingState extends Equatable {
       selectedSlot: clearSelectedSlot
           ? null
           : (selectedSlot ?? this.selectedSlot),
+      selectedCounter: clearSelectedCounter
+          ? null
+          : (selectedCounter ?? this.selectedCounter),
     );
   }
 
   @override
-  List<Object?> get props => [selectedServices, selectedDate, selectedSlot];
+  List<Object?> get props => [
+    selectedServices,
+    selectedDate,
+    selectedSlot,
+    selectedCounter,
+  ];
 }

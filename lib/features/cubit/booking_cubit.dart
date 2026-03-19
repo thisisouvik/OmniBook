@@ -28,11 +28,23 @@ class BookingCubit extends Cubit<BookingState> {
       updatedServices.add(service);
     }
 
-    emit(state.copyWith(selectedServices: updatedServices));
+    emit(
+      state.copyWith(
+        selectedServices: updatedServices,
+        clearSelectedSlot: true,
+        clearSelectedCounter: true,
+      ),
+    );
   }
 
   void resetServices() {
-    emit(state.copyWith(selectedServices: <Service>[]));
+    emit(
+      state.copyWith(
+        selectedServices: <Service>[],
+        clearSelectedSlot: true,
+        clearSelectedCounter: true,
+      ),
+    );
   }
 
   void setDate(DateTime date) {
@@ -40,12 +52,17 @@ class BookingCubit extends Cubit<BookingState> {
       state.copyWith(
         selectedDate: DateTime(date.year, date.month, date.day),
         clearSelectedSlot: true,
+        clearSelectedCounter: true,
       ),
     );
   }
 
   void setSlot(DateTime time) {
-    emit(state.copyWith(selectedSlot: time));
+    emit(state.copyWith(selectedSlot: time, clearSelectedCounter: true));
+  }
+
+  void setCounter(int counterId) {
+    emit(state.copyWith(selectedCounter: counterId));
   }
 
   List<DateTime> availableSlotsForDate(DateTime date) {
@@ -77,10 +94,11 @@ class BookingCubit extends Cubit<BookingState> {
     return _bookingService.bookingsForDate(date);
   }
 
-  Booking confirmBooking() {
+  Booking confirmBooking({int? counterId}) {
     final selectedDate = state.selectedDate;
     final selectedSlot = state.selectedSlot;
     final duration = state.totalDuration;
+    final selectedCounter = counterId ?? state.selectedCounter;
 
     if (selectedDate == null) {
       throw StateError('Select a date before confirming a booking.');
@@ -93,6 +111,9 @@ class BookingCubit extends Cubit<BookingState> {
         'Select at least one service before confirming a booking.',
       );
     }
+    if (selectedCounter == null) {
+      throw StateError('Select a counter before confirming a booking.');
+    }
 
     final start = DateTime(
       selectedDate.year,
@@ -102,13 +123,18 @@ class BookingCubit extends Cubit<BookingState> {
       selectedSlot.minute,
     );
 
-    final freeCounter = _bookingService.findFreeCounter(start, duration);
-    if (freeCounter == null) {
+    final freeCounters = _bookingService.findFreeCounters(start, duration);
+    if (freeCounters.isEmpty) {
       throw StateError('No counters available for the selected slot.');
+    }
+    if (!freeCounters.contains(selectedCounter)) {
+      throw StateError(
+        'Counter $selectedCounter is not available for this slot.',
+      );
     }
 
     return Booking(
-      counterId: freeCounter,
+      counterId: selectedCounter,
       startTime: start,
       endTime: start.add(Duration(minutes: duration)),
     );
