@@ -1,11 +1,11 @@
 class Service {
   final String name;
-  final int durationinMinutes;
+  final int durationInMinutes;
   final double price;
 
-  Service ({
+  const Service({
     required this.name,
-    required this.durationinMinutes,
+    required this.durationInMinutes,
     required this.price,
   });
 }
