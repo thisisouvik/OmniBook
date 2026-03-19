@@ -5,10 +5,13 @@ import 'package:omnibook/features/models/service.dart';
 void main() {
   test('toggleService updates totalDuration', () {
     final cubit = BookingCubit();
-    final haircut = Service(name: 'Haircut', durationinMinutes: 45, price: 20.0);
+    final haircut = Service(
+      name: 'Haircut',
+      durationInMinutes: 45,
+      price: 20.0,
+    );
 
     cubit.toggleService(haircut);
-    print(cubit.state.totalDuration);
 
     expect(cubit.state.totalDuration, 45);
     cubit.close();
