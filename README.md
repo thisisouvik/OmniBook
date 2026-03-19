@@ -3,8 +3,8 @@
 </p>
 <div align="center">
 
-[![Download App](https://img.shields.io/badge/⬇️%20Download%20App-Google%20Drive-blue?style=for-the-badge)](https://drive.google.com/drive/folders/1ALa4LMLRSNlo-AfE8aKxtOtkfFS7qBxy?usp=sharing)
-[![Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-Google%20Drive-red?style=for-the-badge)](https://drive.google.com/drive/folders/15wpaOKLergvQVzf40ISyQte0X5RydYxL?usp=sharing)
+[![Download App](https://img.shields.io/badge/⬇️%20Download%20App-Google%20Drive-blue?style=for-the-badge)](https://drive.google.com/drive/folders/1PJcLKp49UNXe2uAF8pMkmUvxZ1eYHnGW?usp=sharing)
+[![Demo Video](https://img.shields.io/badge/▶️%20Watch%20Demo-Google%20Drive-red?style=for-the-badge)](https://drive.google.com/drive/folders/1kCdDArDWGWe4pbXP00RJIm1djwP2nd9i?usp=sharing)
 
 </div>
 
