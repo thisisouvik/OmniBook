@@ -23,7 +23,7 @@ class BookingState extends Equatable {
   int get totalDuration {
     return selectedServices.fold<int>(
       0,
-      (sum, service) => sum + service.durationinMinutes,
+      (sum, service) => sum + service.durationInMinutes,
     );
   }
 

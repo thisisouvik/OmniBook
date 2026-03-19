@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:omnibook/features/models/booking.dart';
 import 'package:omnibook/features/models/service.dart';
+import 'package:omnibook/features/models/slot_status.dart';
 import 'package:omnibook/features/services/booking_service.dart';
 import 'booking_state.dart';
 
@@ -10,6 +11,10 @@ class BookingCubit extends Cubit<BookingState> {
       super(BookingState.initial());
 
   final BookingService _bookingService;
+
+  int get openingHour => _bookingService.openingHour;
+  int get closingHour => _bookingService.closingHour;
+  int get totalCounters => _bookingService.totalCounters;
 
   void toggleService(Service service) {
     final updatedServices = List<Service>.from(state.selectedServices);
@@ -26,6 +31,10 @@ class BookingCubit extends Cubit<BookingState> {
     emit(state.copyWith(selectedServices: updatedServices));
   }
 
+  void resetServices() {
+    emit(state.copyWith(selectedServices: <Service>[]));
+  }
+
   void setDate(DateTime date) {
     emit(
       state.copyWith(
@@ -37,6 +46,35 @@ class BookingCubit extends Cubit<BookingState> {
 
   void setSlot(DateTime time) {
     emit(state.copyWith(selectedSlot: time));
+  }
+
+  List<DateTime> availableSlotsForDate(DateTime date) {
+    return _bookingService.generateSlotsForDate(date);
+  }
+
+  SlotStatus slotStatus(DateTime start) {
+    final duration = state.totalDuration;
+    if (duration <= 0) {
+      return const SlotStatus(isAvailable: false, freeCounters: <int>[]);
+    }
+    return _bookingService.checkSlot(start, duration);
+  }
+
+  bool counterIsFreeNow(int counterId, {int fallbackDuration = 30}) {
+    final now = DateTime.now();
+    final duration = state.totalDuration > 0
+        ? state.totalDuration
+        : fallbackDuration;
+    return _bookingService.isCounterFree(counterId, now, duration);
+  }
+
+  DateTime? nextFreeWindow(int counterId, DateTime date) {
+    final duration = state.totalDuration > 0 ? state.totalDuration : 30;
+    return _bookingService.nextFreeStartForCounter(counterId, date, duration);
+  }
+
+  List<Booking> bookingsForDate(DateTime date) {
+    return _bookingService.bookingsForDate(date);
   }
 
   Booking confirmBooking() {
