@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:omnibook/features/presentation/screens/home_screen.dart';
 import 'package:omnibook/features/presentation/theme/app_colors.dart';
 
@@ -30,21 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.teal,
       body: Center(
-        child: Image.asset(
-          'assets/images/omnibook_logo.png',
-          width: 220,
-          errorBuilder: (context, error, stackTrace) {
-            return const Text(
-              'OmniBook',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 44,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.5,
-              ),
-            );
-          },
-        ),
+        child: SvgPicture.asset('assets/logo/splashLogo.svg', width: 220),
       ),
     );
   }

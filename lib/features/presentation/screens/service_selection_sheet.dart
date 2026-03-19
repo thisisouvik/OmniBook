@@ -16,14 +16,16 @@ class ServiceSelectionSheet extends StatefulWidget {
 }
 
 class _ServiceSelectionSheetState extends State<ServiceSelectionSheet> {
-  static const List<String> _serviceFor = <String>[
-    'All',
-    'Woman',
-    'Men',
-    'Kids',
-  ];
-
-  String _selectedServiceFor = 'All';
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cubit = context.read<BookingCubit>();
+      if (cubit.state.selectedDate == null) {
+        cubit.setDate(DateTime.now());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,46 +39,8 @@ class _ServiceSelectionSheetState extends State<ServiceSelectionSheet> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
           child: Column(
-            children: <Widget>[
-              Container(
-                width: 64,
-                height: 7,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD0D5DD),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: AppColors.teal, fontSize: 18),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Select',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () =>
-                        context.read<BookingCubit>().resetServices(),
-                    child: const Text(
-                      'Reset',
-                      style: TextStyle(color: AppColors.danger, fontSize: 18),
-                    ),
-                  ),
-                ],
-              ),
+            children: <Widget>
+            [
               const SizedBox(height: 6),
               Expanded(
                 child: BlocBuilder<BookingCubit, BookingState>(
@@ -120,91 +84,11 @@ class _ServiceSelectionSheetState extends State<ServiceSelectionSheet> {
                             },
                           ),
                           const SizedBox(height: 20),
-                          const Text(
-                            'Service for',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: _serviceFor.map((value) {
-                              final selected = value == _selectedServiceFor;
-                              return ChoiceChip(
-                                selected: selected,
-                                showCheckmark: false,
-                                onSelected: (_) =>
-                                    setState(() => _selectedServiceFor = value),
-                                label: Text(value),
-                                side: BorderSide(
-                                  color: selected
-                                      ? AppColors.teal
-                                      : AppColors.border,
-                                ),
-                                selectedColor: AppColors.lightTeal,
-                                backgroundColor: Colors.white,
-                                labelStyle: TextStyle(
-                                  color: selected
-                                      ? AppColors.teal
-                                      : AppColors.textPrimary,
-                                  fontWeight: selected
-                                      ? FontWeight.w700
-                                      : FontWeight.w500,
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Select Counters',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: List<Widget>.generate(3, (index) {
-                              final counterId = index + 1;
-                              final isFree = context
-                                  .read<BookingCubit>()
-                                  .counterIsFreeNow(counterId);
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(22),
-                                  color: isFree
-                                      ? AppColors.success.withValues(
-                                          alpha: 0.12,
-                                        )
-                                      : AppColors.disabledBg,
-                                  border: Border.all(
-                                    color: isFree
-                                        ? AppColors.success
-                                        : AppColors.textSecondary.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Counter $counterId ${isFree ? 'Free' : 'Busy'}',
-                                  style: TextStyle(
-                                    color: isFree
-                                        ? AppColors.success
-                                        : AppColors.textSecondary,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              );
-                            }),
+                          _DatePickerSection(
+                            selectedDate: state.selectedDate,
+                            onDateSelected: (date) {
+                              context.read<BookingCubit>().setDate(date);
+                            },
                           ),
                           const SizedBox(height: 18),
                           if (state.selectedServices.isNotEmpty)
@@ -247,7 +131,7 @@ class _ServiceSelectionSheetState extends State<ServiceSelectionSheet> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       child: const Text(
-                        'Select Date & Time',
+                        'Check Availability',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -258,9 +142,94 @@ class _ServiceSelectionSheetState extends State<ServiceSelectionSheet> {
                   );
                 },
               ),
-            ],
+            ]
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DatePickerSection extends StatelessWidget {
+  const _DatePickerSection({
+    required this.selectedDate,
+    required this.onDateSelected,
+  });
+
+  final DateTime? selectedDate;
+  final ValueChanged<DateTime> onDateSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final displayDate = selectedDate ?? DateTime.now();
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.45)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Select Date',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: () async {
+              final picked = await showDatePicker(
+                context: context,
+                initialDate: displayDate,
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 30)),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: const ColorScheme.light(
+                        primary: AppColors.teal,
+                        surface: Colors.white,
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              if (picked != null) {
+                onDateSelected(picked);
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.lightTeal.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.teal),
+              ),
+              child: Row(
+                children: <Widget>[
+                  const Icon(Icons.calendar_today_rounded,
+                      color: AppColors.teal, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    formatDate(displayDate),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.teal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

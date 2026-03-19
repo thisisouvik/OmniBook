@@ -126,7 +126,7 @@ class BookingConfirmedScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 28),
             TextButton(
               onPressed: () =>
                   Navigator.of(context).popUntil((route) => route.isFirst),

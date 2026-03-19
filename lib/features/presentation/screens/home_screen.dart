@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:omnibook/features/presentation/data/sample_services.dart';
 import 'package:omnibook/features/presentation/screens/service_selection_sheet.dart';
 import 'package:omnibook/features/presentation/theme/app_colors.dart';
 import 'package:omnibook/features/presentation/utils/formatters.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _navIndex = 0;
+
   static const List<_CategoryItem> _categories = <_CategoryItem>[
-    _CategoryItem(label: 'Haircut', icon: Icons.content_cut),
-    _CategoryItem(label: 'Nails', icon: Icons.back_hand_outlined),
-    _CategoryItem(
-      label: 'Facial',
-      icon: Icons.face_retouching_natural_outlined,
-    ),
-    _CategoryItem(label: 'Coloring', icon: Icons.format_color_fill_outlined),
-    _CategoryItem(label: 'Spa', icon: Icons.spa_outlined),
-    _CategoryItem(label: 'Waxing', icon: Icons.waves_outlined),
-    _CategoryItem(label: 'Makeup', icon: Icons.brush_outlined),
-    _CategoryItem(label: 'Message', icon: Icons.self_improvement_outlined),
+    _CategoryItem(label: 'Haircut', iconAsset: 'assets/home/haircut.svg'),
+    _CategoryItem(label: 'Nails', iconAsset: 'assets/home/nails.svg'),
+    _CategoryItem(label: 'Facial', iconAsset: 'assets/home/facial.svg'),
+    _CategoryItem(label: 'Coloring', iconAsset: 'assets/home/colouring.svg'),
+    _CategoryItem(label: 'Spa', iconAsset: 'assets/home/spa.svg'),
+    _CategoryItem(label: 'Waxing', iconAsset: 'assets/home/waxing.svg'),
+    _CategoryItem(label: 'Makeup', iconAsset: 'assets/home/makeup.svg'),
+    _CategoryItem(label: 'Massage', iconAsset: 'assets/home/massage.svg'),
   ];
 
   Future<void> _openServiceSheet(BuildContext context) async {
@@ -27,6 +32,34 @@ class HomeScreen extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => const ServiceSelectionSheet(),
+    );
+  }
+
+  void _onNavTap(int index) {
+    if (index == 0) {
+      setState(() {
+        _navIndex = 0;
+      });
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('Coming soon: this feature is in progress.'),
+        ),
+      );
+  }
+
+  Widget _navIcon(String assetPath, bool active) {
+    return SvgPicture.asset(
+      assetPath,
+      width: 24,
+      height: 24,
+      colorFilter: ColorFilter.mode(
+        active ? AppColors.teal : const Color(0xFF99A1AE),
+        BlendMode.srcIn,
+      ),
     );
   }
 
@@ -44,29 +77,32 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: _navIndex,
+        onTap: _onNavTap,
         selectedItemColor: AppColors.teal,
         unselectedItemColor: const Color(0xFF99A1AE),
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
+            icon: _navIcon('assets/navBar/home.svg', _navIndex == 0),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
+            icon: _navIcon('assets/navBar/explore.svg', _navIndex == 1),
             label: 'Explore',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
+            icon: _navIcon('assets/navBar/calendar.svg', _navIndex == 2),
             label: 'Calendar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none_rounded),
+            icon: _navIcon('assets/navBar/alerts.svg', _navIndex == 3),
             label: 'Alerts',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline_rounded),
+            icon: _navIcon('assets/navBar/profile.svg', _navIndex == 4),
             label: 'Profile',
           ),
         ],
@@ -86,7 +122,7 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           'Hello, Samantha',
                           style: TextStyle(
-                            fontSize: 34,
+                            fontSize: 28,
                             fontWeight: FontWeight.w800,
                             color: AppColors.textPrimary,
                             height: 1.1,
@@ -123,7 +159,7 @@ class HomeScreen extends StatelessWidget {
               const Text(
                 'Quick Book Services',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
@@ -189,7 +225,7 @@ class HomeScreen extends StatelessWidget {
               const Text(
                 'What do you want to do?',
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 24,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
@@ -218,10 +254,15 @@ class HomeScreen extends StatelessWidget {
                             color: AppColors.lightTeal,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            item.icon,
-                            color: AppColors.teal,
-                            size: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: SvgPicture.asset(
+                              item.iconAsset,
+                              colorFilter: const ColorFilter.mode(
+                                AppColors.teal,
+                                BlendMode.srcIn,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -244,19 +285,28 @@ class HomeScreen extends StatelessWidget {
               const Text(
                 'Most Search Interest',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 24,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
-              const Wrap(
+              Wrap(
                 spacing: 10,
                 runSpacing: 10,
-                children: <Widget>[
-                  _InterestChip(label: 'Haircut', icon: Icons.content_cut),
-                  _InterestChip(label: 'Facial', icon: Icons.face_3_outlined),
-                  _InterestChip(label: 'Nails', icon: Icons.back_hand_outlined),
+                children: const <Widget>[
+                  _InterestChip(
+                    label: 'Haircut',
+                    iconAsset: 'assets/home/haircut.svg',
+                  ),
+                  _InterestChip(
+                    label: 'Facial',
+                    iconAsset: 'assets/home/facial.svg',
+                  ),
+                  _InterestChip(
+                    label: 'Nails',
+                    iconAsset: 'assets/home/nails.svg',
+                  ),
                 ],
               ),
             ],
@@ -280,91 +330,9 @@ class _PromoBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: SizedBox(
           height: 120,
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/promo_banner.jpg',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: <Color>[Color(0xFF3E434B), Color(0xFF1E2228)],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              Container(color: Colors.black.withValues(alpha: 0.3)),
-              Positioned(
-                left: 14,
-                top: 16,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      'Look more beautiful and\nsave more discount',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Get offer now!',
-                        style: TextStyle(
-                          color: Color(0xFFF79009),
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                right: 12,
-                top: 14,
-                child: Container(
-                  width: 82,
-                  height: 82,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF79009),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Up to',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        '50%',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          child: SvgPicture.asset(
+            'assets/home/discountCard.svg',
+            fit: BoxFit.cover,
           ),
         ),
       ),
@@ -373,10 +341,10 @@ class _PromoBanner extends StatelessWidget {
 }
 
 class _InterestChip extends StatelessWidget {
-  const _InterestChip({required this.label, required this.icon});
+  const _InterestChip({required this.label, required this.iconAsset});
 
   final String label;
-  final IconData icon;
+  final String iconAsset;
 
   @override
   Widget build(BuildContext context) {
@@ -389,14 +357,22 @@ class _InterestChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, color: AppColors.teal, size: 20),
+          SvgPicture.asset(
+            iconAsset,
+            width: 20,
+            height: 20,
+            colorFilter: const ColorFilter.mode(
+              AppColors.teal,
+              BlendMode.srcIn,
+            ),
+          ),
           const SizedBox(width: 8),
           Text(
             label,
             style: const TextStyle(
               color: AppColors.teal,
               fontWeight: FontWeight.w600,
-              fontSize: 22,
+              fontSize: 16,
             ),
           ),
         ],
@@ -406,8 +382,8 @@ class _InterestChip extends StatelessWidget {
 }
 
 class _CategoryItem {
-  const _CategoryItem({required this.label, required this.icon});
+  const _CategoryItem({required this.label, required this.iconAsset});
 
   final String label;
-  final IconData icon;
+  final String iconAsset;
 }
